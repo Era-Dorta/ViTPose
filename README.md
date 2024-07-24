@@ -197,6 +197,16 @@ Using YOLOv3 human detector. Note the configs here are only for evaluation.
 
 ## Usage
 
+### Docker
+1. Build the image with `docker/docker_build.sh` and spin up a container with `docker/docker_run.sh`
+1. Download and unzip the coco dataset from https://cocodataset.org/#download
+  * [2017 Train images 118K/18GB](http://images.cocodataset.org/zips/train2017.zip)
+  * [2017 Train/Val annotations 241MB](http://images.cocodataset.org/annotations/annotations_trainval2017.zip)
+2. Download the pose estimation data from [HRNet](https://github.com/HRNet/HRNet-Human-Pose-Estimation?tab=readme-ov-file#data-preparation)
+  * [One Drive](https://1drv.ms/f/s!AhIXJn_J-blWzzDXoz5BeFl8sWM-) or [Google Drive](https://drive.google.com/drive/folders/1fRUDNUDxe9fjqcRZ2bnF_TKMlO0nB_dk?usp=sharing)
+3. Download the pretrained models from [hugging face](https://huggingface.co/public-data/ViTPose/tree/main/models) or from the links above
+
+### Bare bones
 We use PyTorch 1.9.0 or NGC docker 21.06, and mmcv 1.3.9 for the experiments.
 ```bash
 git clone https://github.com/open-mmlab/mmcv.git
@@ -214,6 +224,7 @@ After install the two repos, install timm and einops, i.e.,
 pip install timm==0.4.9 einops
 ```
 
+### Train and test scripts 
 After downloading the pretrained models, please conduct the experiments by running
 
 ```bash
