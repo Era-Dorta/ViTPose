@@ -1,0 +1,32 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python Debugger: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "train",
+            "type": "debugpy",
+            "module": "torch.distributed.launch",
+            "request": "launch",
+            "console": "integratedTerminal",
+            "args": [
+                "--nproc_per_node", "1", 
+                "--master_port", "29500",
+                "/workspace/tools/train.py",
+                "configs/body/2d_kpt_sview_rgb_img/topdown_heatmap/coco/ViTPose_small_coco_256x192.py",
+                // "ViTPose/configs/ViTPose_coco_plus_conflab_w_bg_256x192.py",
+                "--launcher", "pytorch",
+                "--cfg-options", "model.pretrained=data/coco/vitpose-b-multi-coco.pth",
+                "--seed", "0",               
+            ]
+        }
+    ]
+}
