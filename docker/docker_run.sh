@@ -4,5 +4,5 @@ docker run -it \
        --gpus all -e DISPLAY=:1 \
        -v /tmp/.X11-unix:/tmp/.X11-unix \
        -v $(pwd):/workspace \
-       local/vitpose:mim \
+       vitpose/vitpose:latest \
        /bin/bash
