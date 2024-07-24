@@ -162,3 +162,5 @@ imgs/
 #.idea/
 
 data/
+mmpose/.mim/
+work_dirs
