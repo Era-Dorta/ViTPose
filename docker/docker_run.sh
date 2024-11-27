@@ -1,4 +1,5 @@
-docker run -it \
+podman run -it \
+       --name vitpose-dev \
        --rm \
        --shm-size=2gb \
        --gpus all -e DISPLAY=:1 \
