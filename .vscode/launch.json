@@ -18,15 +18,69 @@
             "request": "launch",
             "console": "integratedTerminal",
             "args": [
-                "--nproc_per_node", "1", 
+                "--nproc_per_node", "1",  // number of GPUs
+                "--master_port", "29500",
+                "/workspace/tools/train.py",
+                "configs/body/2d_kpt_sview_rgb_img/topdown_heatmap/coco/ViTPose_small_coco_256x192.py",
+                "--launcher", "pytorch",
+                "--cfg-options", "model.pretrained=data/coco/vitpose-b-multi-coco.pth",
+                "--seed", "0",               
+            ]
+        },
+        {
+            "name": "train-conflab",
+            "type": "debugpy",
+            "module": "torch.distributed.launch",
+            "request": "launch",
+            "console": "integratedTerminal",
+            "args": [
+                "--nproc_per_node", "2", // number of GPUs
                 "--master_port", "29500",
                 "/workspace/tools/train.py",
                 "configs/body/2d_kpt_sview_rgb_img/topdown_heatmap/coco/ViTPose_small_coco_256x192.py",
                 // "ViTPose/configs/ViTPose_coco_plus_conflab_w_bg_256x192.py",
                 "--launcher", "pytorch",
                 "--cfg-options", "model.pretrained=data/coco/vitpose-b-multi-coco.pth",
-                "--seed", "0",               
-            ]
-        }
+                "--seed", "0",
+            ],
+            "justMyCode": false
+        },
+        {
+            "name": "train-conflab-no-dist",
+            "type": "debugpy",
+            "request": "launch",
+            "console": "integratedTerminal",
+            "program": "${workspaceFolder}/tools/train.py",
+            "args": [
+                // "configs/body/2d_kpt_sview_rgb_img/topdown_heatmap/coco/ViTPose_small_coco_256x192.py",
+                "configs/ViTPose_coco_plus_conflab_w_bg_256x192.py",
+                "--cfg-options", "model.pretrained=data/coco/vitpose-b-multi-coco.pth",
+                "--seed", "0",
+            ],
+            "justMyCode": false
+        },
+        {
+            "name": "preprocess-conflab",
+            "type": "debugpy",
+            "request": "launch",
+            "console": "integratedTerminal",
+            "program": "${workspaceFolder}/tools/dataset/preprocess_conflab.py",
+            "args": [                
+                "--netid", "edortaperez",
+            ],
+            "justMyCode": true
+        },
+        {
+            "name": "visualise-conflab",
+            "type": "debugpy",
+            "request": "launch",
+            "console": "integratedTerminal",
+            "program": "${workspaceFolder}/tools/dataset/preprocess_conflab.py",
+            "args": [                
+                "--netid", "edortaperez",
+            ],
+            "justMyCode": true
+        },
+        // python tools/misc/browse_dataset.py configs/body_2d_keypoint/topdown_heatmap/coco/td-hm_hrnet-w32_8xb64-e210_coco-256x192.py --mode original
     ]
 }
