@@ -40,7 +40,7 @@ def main():
     parser.add_argument(
         '--radius',
         type=int,
-        default=4,
+        default=2,
         help='Keypoint radius for visualization')
     parser.add_argument(
         '--thickness',
