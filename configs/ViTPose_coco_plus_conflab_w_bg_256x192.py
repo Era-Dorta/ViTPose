@@ -1,7 +1,7 @@
 _base_ = [
     './_base_/default_runtime.py',
-    './_base_/datasets/coco.py',
-    # './_base_/datasets/conflab.py'
+    # './_base_/datasets/coco.py',
+    './_base_/datasets/conflab.py'
 ]
 
 evaluation = dict(interval=1, metric='mAP', save_best='AP')
@@ -185,7 +185,7 @@ data = dict(
             img_prefix=f'{data_root}/images/',
             data_cfg=data_cfg,
             pipeline=train_pipeline,
-            # dataset_info={{_base_.conflab_info}}
+            dataset_info={{_base_.dataset_info}}
             ),    
     ],
     val=dict(
@@ -194,7 +194,7 @@ data = dict(
         img_prefix=f'{data_root}/images/',
         data_cfg=data_cfg,
         pipeline=val_pipeline,
-        # dataset_info={{_base_.dataset_info}}
+        dataset_info={{_base_.dataset_info}}
         ),
     test=dict(
         type='TopDownCocoDataset',
@@ -202,6 +202,6 @@ data = dict(
         img_prefix=f'{data_root}/images/',
         data_cfg=data_cfg,
         pipeline=test_pipeline,
-        # dataset_info={{_base_.dataset_info}}
+        dataset_info={{_base_.dataset_info}}
         ),
 )
