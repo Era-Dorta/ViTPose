@@ -8,11 +8,84 @@ from tqdm import tqdm
 
 IMAGE_WIDTH = 960
 IMAGE_HEIGHT = 540
+SKELETON = [
+    [0, 1],
+    [0, 2],
+    [2, 3],
+    [2, 6],
+    [3, 4],
+    [4, 5],
+    [6, 7],
+    [7, 8],
+    [2, 9],
+    [9, 10],
+    [10, 11],
+    [11, 15],
+    [2, 12],
+    [12, 13],
+    [13, 14],
+    [14, 16],
+]
+KEYPOINT_NAMES = [
+    "head",
+    "nose",
+    "neck",
+    "rightShoulder",
+    "rightElbow",
+    "rightWrist",
+    "leftShoulder",
+    "leftElbow",
+    "leftWrist",
+    "rightHip",
+    "rightKnee",
+    "rightAnkle",
+    "leftHip",
+    "leftKnee",
+    "leftAnkle",
+    "rightFoot",
+    "leftFoot",
+]
+
+
+def remove_border_keypoints(
+    keypoints: np.ndarray,
+    valid_keypoints_mask: np.ndarray,
+    image_width: int,
+    image_height: int,
+    border_percentage: float = 0.025, # Ignore the points that are on the 2.5% borders of the image
+) -> tuple[np.ndarray, np.ndarray]:
+    keypoints = keypoints.copy()
+    valid_keypoints_mask = valid_keypoints_mask.copy()
+    valid_keypoints_mask = valid_keypoints_mask.reshape(-1, 2)
+
+    num_valid = np.sum(valid_keypoints_mask)
+
+    x_min = image_width * border_percentage
+    x_max = image_width * (1 - border_percentage)
+    y_min = image_height * border_percentage
+    y_max = image_height * (1 - border_percentage)
+
+    valid_keypoints_mask[keypoints[:, 0] < x_min, :] = False
+    valid_keypoints_mask[keypoints[:, 0] > x_max, :] = False
+    valid_keypoints_mask[keypoints[:, 1] < y_min, :] = False
+    valid_keypoints_mask[keypoints[:, 1] > y_max, :] = False
+
+    keypoints[keypoints[:, 0] < x_min] = 0.0
+    keypoints[keypoints[:, 0] > x_max] = 0.0
+    keypoints[keypoints[:, 1] < y_min] = 0.0
+    keypoints[keypoints[:, 1] > y_max] = 0.0
+
+    valid_keypoints_mask = valid_keypoints_mask.flatten()
+
+    if num_valid > np.sum(valid_keypoints_mask):
+        print("aaaa")
+
+    return keypoints, valid_keypoints_mask
 
 
 def parse_keypoints(
     keypoints: list[float], occluded: list[float], image_width: int, image_height: int
-) -> tuple[list[float], np.ndarray]:
+) -> tuple[list[float], np.ndarray, np.ndarray]:
     keypoints_np = np.array(keypoints)
     valid_keypoints_mask = keypoints_np != None
     keypoints_np[np.logical_not(valid_keypoints_mask)] = 0
@@ -28,6 +101,10 @@ def parse_keypoints(
     occluded_np[occluded_np == None] = 0
 
     keypoints_np = np.concatenate([keypoints_np, occluded_np[:, np.newaxis]], axis=1)
+
+    keypoints_np, valid_keypoints_mask = remove_border_keypoints(
+        keypoints_np, valid_keypoints_mask, image_width, image_height
+    )
     return keypoints_np.flatten().tolist(), keypoints_np, valid_keypoints_mask
 
 
@@ -90,45 +167,8 @@ def main():
             "supercategory": "person",
             "id": 1,
             "name": "person",
-            "keypoints":
-            [
-                "head",
-                "nose",
-                "neck",
-                "rightShoulder",
-                "rightElbow",
-                "rightWrist",
-                "leftShoulder",
-                "leftElbow",
-                "leftWrist",
-                "rightHip",
-                "rightKnee",
-                "rightAnkle",
-                "leftHip",
-                "leftKnee",
-                "leftAnkle",
-                "rightFoot",
-                "leftFoot",
-            ],
-            "skeleton":
-            [
-                [0, 1],
-                [0, 2],
-                [2, 3],
-                [2, 6],
-                [3, 4],
-                [4, 5],
-                [6, 7],
-                [7, 8],
-                [2, 9],
-                [9, 10],
-                [10, 11],
-                [11, 15],
-                [2, 12],
-                [12, 13],
-                [13, 14],
-                [14, 16],
-            ],
+            "keypoints": KEYPOINT_NAMES,
+            "skeleton": SKELETON,
         }
     ]
 
