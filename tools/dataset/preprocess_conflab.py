@@ -52,7 +52,7 @@ def remove_border_keypoints(
     valid_keypoints_mask: np.ndarray,
     image_width: int,
     image_height: int,
-    border_percentage: float = 0.025, # Ignore the points that are on the 2.5% borders of the image
+    border_percentage: float = 0.025,  # Ignore the points that are on the 2.5% borders of the image
 ) -> tuple[np.ndarray, np.ndarray]:
     keypoints = keypoints.copy()
     valid_keypoints_mask = valid_keypoints_mask.copy()
@@ -109,19 +109,31 @@ def parse_keypoints(
 
 
 def get_bbox(
-    keypoints_np: np.ndarray, valid_keypoints_mask: np.ndarray
+    keypoints_np: np.ndarray,
+    valid_keypoints_mask: np.ndarray,
+    image_width: int,
+    image_height: int,
+    border_percentage: float = 0.05, # Percetange to add to the bounding box so that it is not too tight
 ) -> tuple[float, float, float, float]:
     keypoints_valid = keypoints_np[:, :2].flatten()[valid_keypoints_mask]
 
     if keypoints_valid.size == 0:
         return (0, 0, 0, 0)
 
-    # keypoints_valid = keypoints_valid.astype(np.float32)
     keypoints_valid = keypoints_valid.reshape(-1, 2)
-    x_min = np.min(keypoints_valid[:, 0])
+    x_min = np.min(keypoints_valid[:, 0]) 
     x_max = np.max(keypoints_valid[:, 0])
     y_min = np.min(keypoints_valid[:, 1])
     y_max = np.max(keypoints_valid[:, 1])
+
+    box_width = x_max - x_min
+    box_height = y_max - y_min
+
+    x_min = np.clip(x_min - border_percentage * box_width, 0, image_width)
+    x_max = np.clip(x_max + border_percentage * box_width, 0, image_width)
+    y_min = np.clip(y_min - border_percentage * box_height, 0, image_height)
+    y_max = np.clip(y_max + border_percentage * box_height, 0, image_height)
+
     return (x_min, y_min, x_max - x_min, y_max - y_min)
 
 
@@ -240,7 +252,12 @@ def main():
                     image_width=IMAGE_WIDTH,
                     image_height=IMAGE_HEIGHT,
                 )
-                annot["bbox"] = get_bbox(keypoints, valid_keypoints_mask)
+                annot["bbox"] = get_bbox(
+                    keypoints,
+                    valid_keypoints_mask,
+                    image_width=IMAGE_WIDTH,
+                    image_height=IMAGE_HEIGHT,
+                )
                 processed_annotations["annotations"].append(annot)
                 j += 1
 
