@@ -119,7 +119,6 @@
             "--img-root", "data/conflab/images",
             "--json-file", "data/conflab/annotations/person_keypoints.json",
             "--out-img-root", "work_dirs/ViTPose_coco_plus_conflab_w_bg_256x192/out_images_conflab_gt",
-            // "--show",
             //////////////////////////////
             // COCO
             //////////////////////////////
