@@ -78,9 +78,6 @@ def remove_border_keypoints(
 
     valid_keypoints_mask = valid_keypoints_mask.flatten()
 
-    if num_valid > np.sum(valid_keypoints_mask):
-        print("aaaa")
-
     return keypoints, valid_keypoints_mask
 
 
