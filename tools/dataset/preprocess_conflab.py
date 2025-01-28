@@ -236,7 +236,7 @@ def main():
         if not segment_path.exists():
             raise FileNotFoundError(f"Could not find {segment_path}")
 
-        # Only process two seconds of video, put before the start_number: "-t", str(2),
+        # Only process one second of video, put before the start_number: "-t", str(1),
         cmd = ["ffmpeg", "-y", "-i", str(segment_path), "-start_number", str(total_images), image_path / f"%09d.jpg"]
         ret = subprocess.run(cmd, capture_output=True)
         if ret.returncode != 0:
@@ -252,7 +252,7 @@ def main():
             processed_annotations["images"].append(
                 {
                     "id": i,
-                    "file_name": image_path.name / f"{i:09d}.jpg",
+                    "file_name": f"{i:09d}.jpg",
                     "width": IMAGE_WIDTH,
                     "height": IMAGE_HEIGHT,
                 }
