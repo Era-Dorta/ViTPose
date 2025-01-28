@@ -164,7 +164,6 @@ test_pipeline = val_pipeline
 
 data_root = 'data/conflab'
 coco_data_root = 'data/coco'
-fes_data_root = 'data/poseFES_concat'
 data = dict(
     samples_per_gpu=64,
     workers_per_gpu=4,
