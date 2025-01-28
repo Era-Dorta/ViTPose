@@ -134,6 +134,16 @@ def get_bbox(
 
     return (x_min, y_min, x_max - x_min, y_max - y_min)
 
+def exit_if_file_exists_or_folder_not_empty(file_or_folder: Path):
+    if file_or_folder.exists():
+        if file_or_folder.is_dir():
+            if len(list(file_or_folder.iterdir())) > 0:
+                print(f"{file_or_folder} is not empty. Will not overwrite.")
+                exit(-1)
+        else:
+            print(f"{file_or_folder} already exists. Will not overwrite.")
+            exit(-1)
+
 
 def main():
     parser = ArgumentParser()
@@ -204,7 +214,8 @@ def main():
     test_image_path.mkdir(parents=True, exist_ok=True)
     test_output_annot_path = processed_conflab_path / "keypoints_and_bboxes_test.json"
 
-    
+    for folder in [train_image_path, test_image_path, train_output_annot_path, test_output_annot_path]:
+        exit_if_file_exists_or_folder_not_empty(folder)
 
     total_train_images = 0
     total_test_images = 0
