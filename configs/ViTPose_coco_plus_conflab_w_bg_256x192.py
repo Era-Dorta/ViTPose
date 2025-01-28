@@ -181,8 +181,8 @@ data = dict(
         #     ),
         dict(
             type='TopDownCocoDataset',
-            ann_file=f'{data_root}/annotations/person_keypoints.json',
-            img_prefix=f'{data_root}/images/',
+            ann_file=f'{data_root}/keypoints_and_bboxes_train.json',
+            img_prefix=f'{data_root}/images_train/',
             data_cfg=data_cfg,
             pipeline=train_pipeline,
             dataset_info={{_base_.dataset_info}}
@@ -190,16 +190,16 @@ data = dict(
     ],
     val=dict(
         type='TopDownCocoDataset',
-        ann_file=f'{data_root}/annotations/person_keypoints.json',
-        img_prefix=f'{data_root}/images/',
+        ann_file=f'{data_root}/keypoints_and_bboxes_test.json',
+        img_prefix=f'{data_root}/images_test/',
         data_cfg=data_cfg,
         pipeline=val_pipeline,
         dataset_info={{_base_.dataset_info}}
         ),
     test=dict(
         type='TopDownCocoDataset',
-        ann_file=f'{data_root}/annotations/person_keypoints.json',
-        img_prefix=f'{data_root}/images/',
+        ann_file=f'{data_root}/keypoints_and_bboxes_test.json',
+        img_prefix=f'{data_root}/images_test/',
         data_cfg=data_cfg,
         pipeline=test_pipeline,
         dataset_info={{_base_.dataset_info}}
