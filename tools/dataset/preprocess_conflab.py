@@ -261,28 +261,28 @@ def main():
         multi_people_annot: dict
         for multi_people_annot in tqdm(
             conflab_annot["annotations"]["skeletons"],
-            desc="Annot multiple",
+            desc="Annotations",
             leave=False,
         ):
-            for annot in multi_people_annot.values():
+            for single_person_annot in multi_people_annot.values():
                 # # Break early
                 # if annot["image_id"] not in [0, 30, 50]:
                 #     continue
-                annot["id"] = j
-                annot["image_id"] += new_images_start
-                annot["keypoints"], keypoints, valid_keypoints_mask = parse_keypoints(
-                    annot["keypoints"],
-                    annot["occluded"],
+                single_person_annot["id"] = j
+                single_person_annot["image_id"] += new_images_start
+                single_person_annot["keypoints"], keypoints, valid_keypoints_mask = parse_keypoints(
+                    single_person_annot["keypoints"],
+                    single_person_annot["occluded"],
                     image_width=IMAGE_WIDTH,
                     image_height=IMAGE_HEIGHT,
                 )
-                annot["bbox"] = get_bbox(
+                single_person_annot["bbox"] = get_bbox(
                     keypoints,
                     valid_keypoints_mask,
                     image_width=IMAGE_WIDTH,
                     image_height=IMAGE_HEIGHT,
                 )
-                processed_annotations["annotations"].append(annot)
+                processed_annotations["annotations"].append(single_person_annot)
                 j += 1
 
         if cam in TRAIN_CAMERAS:
