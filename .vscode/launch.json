@@ -116,8 +116,8 @@
             // CONFLAB
             //////////////////////////////
             "configs/ViTPose_coco_plus_conflab_w_bg_256x192.py",
-            "--img-root", "data/conflab/images",
-            "--json-file", "data/conflab/annotations/person_keypoints.json",
+            "--img-root", "data/conflab/images_train",
+            "--json-file", "data/conflab/keypoints_and_bboxes_train.json",
             "--out-img-root", "work_dirs/ViTPose_coco_plus_conflab_w_bg_256x192/out_images_conflab_gt",
             //////////////////////////////
             // COCO
