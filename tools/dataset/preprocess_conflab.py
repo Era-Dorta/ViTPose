@@ -45,7 +45,8 @@ KEYPOINT_NAMES = [
     "rightFoot",
     "leftFoot",
 ]
-
+TRAIN_CAMERAS = ["cam2", "cam4", "cam6"]
+TEST_CAMERAS = ["cam8"]
 
 def remove_border_keypoints(
     keypoints: np.ndarray,
@@ -186,27 +187,52 @@ def main():
 
     categories[0]["skeleton"] = (np.array(categories[0]["skeleton"]) + 1).tolist()
 
-    processed_annotations: dict[str, list[dict, Any]] = {
+    train_processed_annotations: dict[str, list[dict, Any]] = {
         "images": [],
         "annotations": [],
         "categories": categories,
     }
 
-    image_path = processed_conflab_path / "images"
-    image_path.mkdir(parents=True, exist_ok=True)
-    output_annot_path = processed_conflab_path / "annotations" / "person_keypoints.json"
+    test_processed_annotations: dict[str, list[dict, Any]] = {
+        "images": [],
+        "annotations": [],
+        "categories": categories,
+    }
 
-    total_images = 0
+    train_image_path = processed_conflab_path / "images_train"
+    train_image_path.mkdir(parents=True, exist_ok=True)
+    train_output_annot_path = processed_conflab_path / "keypoints_and_bboxes_train.json"
+
+    test_image_path = processed_conflab_path / "images_test"
+    test_image_path.mkdir(parents=True, exist_ok=True)
+    test_output_annot_path = processed_conflab_path / "keypoints_and_bboxes_test.json"
+
+    
+
+    total_train_images = 0
+    total_test_images = 0
     j = 0
     for annotation_file in tqdm(
         sorted(annotations_path.glob("*.json")), desc="Video segment"
     ):
-        # Break early
-        print(annotation_file.stem)
-        if annotation_file.stem != "cam2_vid2_seg9_coco":
-            continue
+        # # Break early
+        # print(annotation_file.stem)
+        # if annotation_file.stem not in ["cam2_vid2_seg8_coco", "cam2_vid2_seg9_coco", "cam8_vid2_seg9_coco"]:
+        #     continue
 
         cam, vid, seg, _ = annotation_file.name.split("_")
+
+        if cam in TRAIN_CAMERAS:
+            image_path = train_image_path
+            total_images = total_train_images
+            processed_annotations = train_processed_annotations
+        elif cam in TEST_CAMERAS:
+            image_path = test_image_path            
+            total_images = total_test_images
+            processed_annotations = test_processed_annotations
+        else:
+            print("Skipping", cam)
+            continue
 
         segment_path = video_segments_path / cam / f"{vid}-{seg}-scaled-denoised.mp4"
 
@@ -214,10 +240,10 @@ def main():
             raise FileNotFoundError(f"Could not find {segment_path}")
 
         # Only process two seconds of video, put before the start_number: "-t", str(2),
-        # cmd = ["ffmpeg", "-y", "-i", str(segment_path), "-t", str(1), "-start_number", str(total_images), image_path / f"%09d.jpg"]
-        # ret = subprocess.run(cmd, capture_output=True)
-        # if ret.returncode != 0:
-        #     raise RuntimeError(f"Failed to split segment in frames {segment_path}")
+        cmd = ["ffmpeg", "-y", "-i", str(segment_path), "-start_number", str(total_images), image_path / f"%09d.jpg"]
+        ret = subprocess.run(cmd, capture_output=True)
+        if ret.returncode != 0:
+            raise RuntimeError(f"Failed to split segment in frames {segment_path}")
 
         new_images_start = total_images
         total_images = len(list(image_path.glob("*.jpg")))
@@ -229,7 +255,7 @@ def main():
             processed_annotations["images"].append(
                 {
                     "id": i,
-                    "file_name": f"{i:09d}.jpg",
+                    "file_name": image_path.name / f"{i:09d}.jpg",
                     "width": IMAGE_WIDTH,
                     "height": IMAGE_HEIGHT,
                 }
@@ -242,8 +268,9 @@ def main():
             leave=False,
         ):
             for annot in multi_people_annot.values():
-                if annot["image_id"] not in [0, 30, 50]:
-                    continue
+                # # Break early
+                # if annot["image_id"] not in [0, 30, 50]:
+                #     continue
                 annot["id"] = j
                 annot["image_id"] += new_images_start
                 annot["keypoints"], keypoints, valid_keypoints_mask = parse_keypoints(
@@ -261,9 +288,15 @@ def main():
                 processed_annotations["annotations"].append(annot)
                 j += 1
 
-    output_annot_path.parent.mkdir(parents=True, exist_ok=True)
-    with output_annot_path.open("w") as f:
-        json.dump(processed_annotations, f, indent=4)
+        if cam in TRAIN_CAMERAS:
+            total_train_images = total_images
+        elif cam in TEST_CAMERAS:
+            total_test_images = total_images
+
+    for annot_path, processed_annotations in zip([train_output_annot_path, test_output_annot_path], [train_processed_annotations, test_processed_annotations]):
+        annot_path.parent.mkdir(parents=True, exist_ok=True)
+        with annot_path.open("w") as f:
+            json.dump(processed_annotations, f, indent=4)
 
 
 if __name__ == "__main__":
