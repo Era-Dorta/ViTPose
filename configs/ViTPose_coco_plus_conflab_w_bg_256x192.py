@@ -165,10 +165,10 @@ test_pipeline = val_pipeline
 data_root = 'data/conflab'
 coco_data_root = 'data/coco'
 data = dict(
-    samples_per_gpu=64,
+    samples_per_gpu=32, # 64 original value, 12 for 1080 TI, 32 for A40 
     workers_per_gpu=4,
-    val_dataloader=dict(samples_per_gpu=32),
-    test_dataloader=dict(samples_per_gpu=32),
+    val_dataloader=dict(samples_per_gpu=12), # 32 original value, 6 for 1080 TI, 12 for A40 
+    test_dataloader=dict(samples_per_gpu=12), # 32 original value, 6 for 1080 TI, 12 for A40 
     train=[
         # dict(
         #     type='TopDownCocoDataset',
