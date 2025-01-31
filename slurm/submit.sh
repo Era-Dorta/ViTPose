@@ -6,9 +6,12 @@
 #SBATCH --qos=medium
 #SBATCH --gres=gpu:a40
  
+export APPTAINER_CWD=/workspace
+
 apptainer run \
     --nv \
     --containall \
+    --env PYTHONPATH=/workspace \
     --bind $(pwd):/workspace \
     --bind /tudelft.net/staff-umbrella/neon/experiments/VIT003/:/workspace/data/conflab \
     /tudelft.net/staff-umbrella/neon/apptainer/vitpose-0.0.5.sif
