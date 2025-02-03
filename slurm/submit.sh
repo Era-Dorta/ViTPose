@@ -1,7 +1,7 @@
 #!/bin/sh
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=16
-#SBATCH --mem=48G
+#SBATCH --mem=64G
 #SBATCH --time=35:59:00
 #SBATCH --qos=medium
 #SBATCH --gres=gpu:a40
@@ -18,4 +18,4 @@ apptainer run \
     python /workspace/tools/train.py configs/ViTPose_coco_plus_conflab_w_bg_256x192.py \
     --cfg-options model.pretrained=data/conflab/models/vitpose_base_coco_aic_mpii.pth --seed 0
 
-# sbatch --job-name vitpose-conflab --account ewi-insy-prb --partition insy,general submit.sh
+# sbatch --job-name vitpose-conflab --account ewi-insy-prb --partition insy,general slurm/submit.sh
