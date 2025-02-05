@@ -247,8 +247,14 @@ def main():
         if not segment_path.exists():
             raise FileNotFoundError(f"Could not find {segment_path}")
 
-        # Only process one second of video, put before the start_number: "-t", str(1),
-        cmd = ["ffmpeg", "-y", "-i", str(segment_path), "-start_number", str(total_images), image_path / f"%09d.jpg"]
+        cmd = ["ffmpeg", "-y", "-i", str(segment_path)]
+
+        # Reduce the size of the test set by only storing one frame per second
+        if cam in TEST_CAMERAS:            
+            cmd += ["-vf", "select=not(mod(n\,60))", "-vsync", "vfr"]
+
+        # To only process one second of video, put before the start_number: "-t", str(1)
+        cmd += ["-start_number", str(total_images), image_path / f"%09d.jpg"]
         ret = subprocess.run(cmd, capture_output=True)
         if ret.returncode != 0:
             raise RuntimeError(f"Failed to split segment in frames {segment_path}")
@@ -279,8 +285,15 @@ def main():
                 # # Break early
                 # if annot["image_id"] not in [0, 30, 50]:
                 #     continue
+                if cam in TEST_CAMERAS and single_person_annot["image_id"] % 60 != 0:
+                    continue
+
+                if cam in TEST_CAMERAS:
+                    single_person_annot["image_id"] = single_person_annot["image_id"] // 60 + new_images_start
+                else:
+                    single_person_annot["image_id"] += new_images_start
+
                 single_person_annot["id"] = j
-                single_person_annot["image_id"] += new_images_start
                 single_person_annot["keypoints"], keypoints, valid_keypoints_mask = parse_keypoints(
                     single_person_annot["keypoints"],
                     single_person_annot["occluded"],
