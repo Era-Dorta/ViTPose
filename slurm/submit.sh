@@ -5,9 +5,15 @@
 #SBATCH --time=35:59:00
 #SBATCH --qos=medium
 #SBATCH --gres=gpu:a40
- 
+
+# Set the CWD when the container is spin up
 export APPTAINER_CWD=/workspace
 
+# Run the container with:
+# nvidia support
+# set the PYTHONPATH for the local modules that are not installed properly via pip
+# --bind $(pwd):/workspace to mount the code at the /workspace folder
+# --bind /tmp:/tmp to avoid out of disk space errors inside the container on each evaluation step
 apptainer run \
     --nv \
     --containall \
