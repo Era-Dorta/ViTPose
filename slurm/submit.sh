@@ -14,6 +14,7 @@ apptainer run \
     --env PYTHONPATH=/workspace \
     --bind $(pwd):/workspace \
     --bind /tudelft.net/staff-umbrella/neon/experiments/VIT003/:/workspace/data/conflab \
+    --bind /tmp:/tmp \
     /tudelft.net/staff-umbrella/neon/apptainer/vitpose-0.0.5.sif \
     python /workspace/tools/train.py configs/ViTPose_coco_plus_conflab_w_bg_256x192.py \
     --cfg-options model.pretrained=data/conflab/models/vitpose_base_coco_aic_mpii.pth --seed 0
