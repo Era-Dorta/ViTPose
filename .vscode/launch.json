@@ -37,10 +37,10 @@
                 "--nproc_per_node", "2", // number of GPUs
                 "--master_port", "29500",
                 "/workspace/tools/train.py",
-                "configs/body/2d_kpt_sview_rgb_img/topdown_heatmap/coco/ViTPose_small_coco_256x192.py",
-                // "ViTPose/configs/ViTPose_coco_plus_conflab_w_bg_256x192.py",
+                // "configs/body/2d_kpt_sview_rgb_img/topdown_heatmap/coco/ViTPose_small_coco_256x192.py",
+                "configs/ViTPose_coco_plus_conflab_w_bg_256x192.py",
                 "--launcher", "pytorch",
-                "--cfg-options", "model.pretrained=data/coco/vitpose-b-multi-coco.pth",
+                "--cfg-options", "model.pretrained=data/conflab/models/vitpose_base_coco_aic_mpii.pth",
                 "--seed", "0",
             ],
             "justMyCode": false
@@ -54,7 +54,7 @@
             "args": [
                 // "configs/body/2d_kpt_sview_rgb_img/topdown_heatmap/coco/ViTPose_small_coco_256x192.py",
                 "configs/ViTPose_coco_plus_conflab_w_bg_256x192.py",
-                "--cfg-options", "model.pretrained=data/coco/vitpose-b-multi-coco.pth",
+                "--cfg-options", "model.pretrained=data/conflab/models/vitpose_base_coco_aic_mpii.pth",
                 "--seed", "0",
             ],
             "justMyCode": true
@@ -97,10 +97,14 @@
         "program": "${workspaceFolder}/demo/top_down_img_demo.py",
         "args": [                
             "configs/ViTPose_coco_plus_conflab_w_bg_256x192.py",
-            "work_dirs/ViTPose_coco_plus_conflab_w_bg_256x192/epoch_5.pth",
-            "--img-root", "data/conflab/images",
-            "--json-file", "data/conflab/annotations/person_keypoints.json",
-            "--out-img-root", "work_dirs/ViTPose_coco_plus_conflab_w_bg_256x192/out_images_gt",
+            "work_dirs/ViTPose_coco_plus_conflab_w_bg_256x192/epoch_1.pth",
+            "--img-root", 
+            "data/conflab/images_test",
+            // "data/conflab/full_test_data/images_test",
+            "--json-file", 
+            "data/conflab/keypoints_and_bboxes_test.json",
+            // "data/conflab/full_test_data/keypoints_and_bboxes_test.json",
+            "--out-img-root", "work_dirs/ViTPose_coco_plus_conflab_w_bg_256x192/out_images_epoch_1_test",
             // "--show",
         ],
         "justMyCode": true
@@ -116,18 +120,35 @@
             // CONFLAB
             //////////////////////////////
             "configs/ViTPose_coco_plus_conflab_w_bg_256x192.py",
-            "--img-root", "data/conflab/images_train",
-            "--json-file", "data/conflab/keypoints_and_bboxes_train.json",
-            "--out-img-root", "work_dirs/ViTPose_coco_plus_conflab_w_bg_256x192/out_images_conflab_gt",
-            //////////////////////////////
+            // "--img-root", "data/conflab/images_train",
+            // "--json-file", "data/conflab/keypoints_and_bboxes_train.json",
+            // "--out-img-root", "work_dirs/ViTPose_coco_plus_conflab_w_bg_256x192/out_images_conflab_gt",
+            "--img-root", "data/conflab/images_test",
+            "--json-file", "data/conflab/keypoints_and_bboxes_test.json",
+            "--out-img-root", "work_dirs/ViTPose_coco_plus_conflab_w_bg_256x192/out_images_conflab_test_gt",
+            ////////////////////////////
             // COCO
             //////////////////////////////
             // "configs/body/2d_kpt_sview_rgb_img/topdown_heatmap/coco/ViTPose_small_coco_256x192.py",
             // "--img-root", "data/coco/train2017",
             // "--json-file", "data/coco/annotations/person_keypoints_train2017.json",
             // "--out-img-root", "work_dirs/ViTPose_coco_plus_conflab_w_bg_256x192/out_images_coco_gt",
+            // //////////////////////////////
+            // // CONFLAB RAW
+            // //////////////////////////////
+            // "configs/ViTPose_coco_plus_conflab_w_bg_256x192.py",
+            // // "--img-root", "data/conflab/images_train",
+            // // "--json-file", "data/conflab/keypoints_and_bboxes_train.json",
+            // // "--out-img-root", "work_dirs/ViTPose_coco_plus_conflab_w_bg_256x192/out_images_conflab_gt",
+            // "--img-root", "data/conflab-raw/images_train",
+            // "--json-file", "data/conflab-raw/keypoints_and_bboxes_train.json",
+            // "--out-img-root", "work_dirs/ViTPose_coco_plus_conflab_w_bg_256x192/out_images_conflab_train_raw_gt",
         ],
         "justMyCode": true
     },
     ]
 }
+
+
+// RUN THIS BEFORE RUNNING ANY COMMAND IN DOCKER
+// export PYTHONPATH=/workspace 
