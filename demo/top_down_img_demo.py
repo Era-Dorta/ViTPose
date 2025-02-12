@@ -2,6 +2,7 @@
 import os
 import warnings
 from argparse import ArgumentParser
+from tqdm import tqdm
 
 from xtcocotools.coco import COCO
 
@@ -78,7 +79,7 @@ def main():
     output_layer_names = None
 
     # process each image
-    for i in range(len(img_keys)):
+    for i in tqdm(range(len(img_keys))):
         # get bounding box annotations
         image_id = img_keys[i]
         image = coco.loadImgs(image_id)[0]
